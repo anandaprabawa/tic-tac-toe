@@ -36,6 +36,11 @@ $tic-tac-toe-theme: mat.define-light-theme(
 
 /* You can add global styles to this file, and also import other style files */
 
+:root {
+  --background-color: #00213f;
+  --primary-color: #ffa500;
+}
+
 html,
 body {
   height: 100%;

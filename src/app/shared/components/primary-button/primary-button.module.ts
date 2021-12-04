@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MenuListComponent } from './menu-list.component';
+import { PrimaryButtonComponent } from './primary-button.component';
 
 @NgModule({
-  declarations: [MenuListComponent],
+  declarations: [PrimaryButtonComponent],
   imports: [CommonModule, MatButtonModule],
-  exports: [MenuListComponent],
+  exports: [PrimaryButtonComponent],
 })
-export class MenuListModule {}
+export class PrimaryButtonModule {}

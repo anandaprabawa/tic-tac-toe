@@ -1,13 +1,29 @@
+:host {
+  display: block;
+  width: 100%;
+  padding: 32px;
+  box-sizing: border-box;
+}
+
 .title {
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 1px;
-  color: #333333;
+  color: #ffffff;
   font-size: 40px;
   text-align: center;
+  text-shadow: 0px 0px 10px #add8e6;
 }
 
 .menu-list {
   margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.menu-item-button {
   display: block;
+  max-width: 320px;
+  width: 100%;
 }
