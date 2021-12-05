@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { merge } from 'rxjs';
+import { find, merge } from 'rxjs';
 import { Board, BoardResult, BoardResultItem } from '../types/board.type';
 import { WinnerCheckingParams } from '../types/winner.type';
 import { RulesService } from './rules.service';
@@ -15,7 +15,11 @@ export class WinnerService {
       this.checkHorizontal(params),
       this.checkVertical(params),
       this.checkDiagonal(params),
-    ]);
+    ]).pipe(
+      // Prevent win invocations from multiple combinations.
+      // If there is a winner, complete the observable.
+      find((player) => !!player)
+    );
   }
 
   checkDiagonal(params: WinnerCheckingParams) {
