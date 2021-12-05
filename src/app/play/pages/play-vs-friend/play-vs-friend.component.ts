@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { delay, filter, of, switchMap, take, tap } from 'rxjs';
+import { Room } from 'src/app/core/models/room.model';
 import { RoomService } from 'src/app/core/services/room.service';
-import { RulesService } from 'src/app/core/services/rules.service';
 import { UiService } from 'src/app/core/services/ui.service';
 import { BoardFinish } from 'src/app/shared/components/board/board-finish.type';
 import { ErrorDialogComponent } from 'src/app/shared/components/error-dialog/error-dialog.component';
@@ -18,19 +18,26 @@ import { WinnerDialogData } from 'src/app/shared/components/winner-dialog/winner
 })
 export class PlayVsFriendComponent implements OnInit {
   errorDialogRef?: MatDialogRef<ErrorDialogComponent>;
-  boardSize: number = this.rulesService.minBoardSize;
+  room?: Room;
 
   constructor(
     private readonly router: Router,
     private readonly route: ActivatedRoute,
     private readonly dialog: MatDialog,
     private readonly roomService: RoomService,
-    public readonly uiService: UiService,
-    private readonly rulesService: RulesService
+    public readonly uiService: UiService
   ) {}
 
   get roomIdParam() {
     return this.route.snapshot.queryParams['roomId'];
+  }
+
+  get player1() {
+    return this.room?.players[0];
+  }
+
+  get player2() {
+    return this.room?.players[1];
   }
 
   ngOnInit() {
@@ -41,7 +48,7 @@ export class PlayVsFriendComponent implements OnInit {
         switchMap(() => this.roomService.getRoom(this.roomIdParam)),
         take(1),
         tap((room) => {
-          this.boardSize = room.boardSize;
+          this.room = room;
         }),
         tap(() => this.uiService.loadingScreen$.next(false)),
         tap((room) => {

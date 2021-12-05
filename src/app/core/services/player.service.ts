@@ -17,7 +17,9 @@ export class PlayerService {
   ) {}
 
   saveName(name: string, roomId: string, player: 1 | 2): Observable<string> {
-    const refPath = `${this.roomService.roomsPath}/${roomId}/${this.playersPath}/${player}`;
+    const refPath = `${this.roomService.roomsPath}/${roomId}/${
+      this.playersPath
+    }/${player - 1}`;
     const dbRef = ref(this.db, refPath);
     const data = {
       uid: this.auth.currentUser?.uid,

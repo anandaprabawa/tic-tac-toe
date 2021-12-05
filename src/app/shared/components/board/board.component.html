@@ -13,10 +13,10 @@
     >
       <div class="square">
         <div class="item" (click)="makeMove(rowIndex, itemIndex)">
-          <ng-container *ngIf="item === player1Identity">
+          <ng-container *ngIf="item === player1Name">
             <mat-icon svgIcon="close" class="icon"></mat-icon>
           </ng-container>
-          <ng-container *ngIf="item === player2Identity">
+          <ng-container *ngIf="item === player2Name">
             <mat-icon svgIcon="circle" class="icon"></mat-icon>
           </ng-container>
         </div>

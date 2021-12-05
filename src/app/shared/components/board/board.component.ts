@@ -28,8 +28,9 @@ import { BoardFinish } from './board-finish.type';
 })
 export class BoardComponent implements OnInit, OnDestroy {
   @Input() size = 3;
-  @Input() player1Identity = 'X';
-  @Input() player2Identity = 'O';
+  @Input() player1Name = 'X';
+  @Input() player2Name = 'O';
+
   playerTurn: 1 | 2 = 1;
 
   board: Board = [];
@@ -65,7 +66,7 @@ export class BoardComponent implements OnInit, OnDestroy {
 
   get currentPlayer() {
     const identity =
-      this.playerTurn === 1 ? this.player1Identity : this.player2Identity;
+      this.playerTurn === 1 ? this.player1Name : this.player2Name;
 
     return {
       turn: this.playerTurn,
@@ -137,7 +138,7 @@ export class BoardComponent implements OnInit, OnDestroy {
         this.winnerService.checkWinner({
           board: this.board,
           boardResult: boardResult,
-          playerIdentities: [this.player1Identity, this.player2Identity],
+          playerIdentities: [this.player1Name, this.player2Name],
         }),
       ])
     ),
