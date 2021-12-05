@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Database, get, ref, set } from '@angular/fire/database';
-import { from, map, Observable } from 'rxjs';
+import { from, map, Observable, of } from 'rxjs';
 import { Room } from '../models/room.model';
 import { GeneratedIdService } from './generated-id.service';
 import { RulesService } from './rules.service';
@@ -31,7 +31,8 @@ export class RoomService {
     return from(set(dbRef, data)).pipe(map(() => roomId));
   }
 
-  getRoom(roomId: string): Observable<Room> {
+  getRoom(roomId: string): Observable<Room | null> {
+    if (!roomId) return of(null);
     const refPath = `${this.roomsPath}/${roomId}`;
     const dbRef = ref(this.db, refPath);
     return from(get(dbRef)).pipe(map((snapshot) => snapshot.val()));

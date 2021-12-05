@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { BoardModule } from './components/board/board.module';
 import { CenteredLayoutModule } from './components/centered-layout/centered-layout.module';
 import { ErrorDialogModule } from './components/error-dialog/error-dialog.module';
+import { JoinRoomDialogModule } from './components/join-room-dialog/join-room-dialog.module';
 import { LoadingScreenModule } from './components/loading-screen/loading-screen.module';
 import { NameDialogModule } from './components/name-dialog/name-dialog.module';
 import { NavMenuModule } from './components/nav-menu/nav-menu.module';
@@ -20,6 +21,7 @@ import { WinnerDialogModule } from './components/winner-dialog/winner-dialog.mod
     NameDialogModule,
     LoadingScreenModule,
     ErrorDialogModule,
+    JoinRoomDialogModule,
   ],
 })
 export class SharedModule {}
