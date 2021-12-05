@@ -1,0 +1,21 @@
+<div class="board">
+  <div
+    *ngFor="
+      let row of boardSquares$ | async;
+      index as rowIndex;
+      trackBy: trackByRow
+    "
+    class="board-row"
+  >
+    <div
+      *ngFor="let item of row; index as itemIndex; trackBy: trackByRowItem"
+      class="board-item"
+    >
+      <div class="square">
+        <div class="item" (click)="makeMove(rowIndex, itemIndex)">
+          {{ item | hideBoardKey }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

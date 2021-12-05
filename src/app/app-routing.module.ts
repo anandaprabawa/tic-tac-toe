@@ -7,6 +7,10 @@ const routes: Routes = [
     loadChildren: () =>
       import('./main-menu/main-menu.module').then((m) => m.MainMenuModule),
   },
+  {
+    path: 'play',
+    loadChildren: () => import('./play/play.module').then((m) => m.PlayModule),
+  },
 ];
 
 @NgModule({
