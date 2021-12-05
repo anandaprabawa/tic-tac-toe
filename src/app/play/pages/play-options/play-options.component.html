@@ -1,0 +1,37 @@
+<app-nav-menu></app-nav-menu>
+
+<div class="card">
+  <h2 class="title">Play Options</h2>
+
+  <form [formGroup]="form" class="form">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Board Size</mat-label>
+      <input
+        matInput
+        formControlName="boardSize"
+        type="number"
+        min="3"
+        max="10"
+        [defaultValue]="3"
+      />
+      <mat-hint *ngIf="boardSizeControl.value"
+        >Board size of {{ boardSizeControl.value }} will be
+        {{ boardSizeControl.value }}X{{ boardSizeControl.value }}</mat-hint
+      >
+      <mat-error *ngIf="boardSizeControl.invalid">{{
+        getBoardSizeErrorMessage()
+      }}</mat-error>
+    </mat-form-field>
+
+    <div class="start-button-wrapper">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        (click)="startGame()"
+      >
+        Start
+      </button>
+    </div>
+  </form>
+</div>

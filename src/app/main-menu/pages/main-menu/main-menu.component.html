@@ -14,7 +14,8 @@
 <div class="menu-list">
   <app-primary-button
     class="menu-item-button"
-    routerLink="/play/vs-friend"
+    routerLink="/play"
+    [queryParams]="{ type: 'vsFriend' }"
     [replaceUrl]="true"
     >VS Friend</app-primary-button
   >
