@@ -7,6 +7,13 @@ const board3x3 = [
   [7, 8, 9],
 ];
 
+const board4x4 = [
+  [1, 2, 3, 4],
+  [5, 6, 7, 8],
+  [9, 10, 11, 12],
+  [13, 14, 15, 16],
+];
+
 const board5x5 = [
   [0, 1, 2, 3, 4],
   [5, 6, 7, 8, 9],
@@ -262,6 +269,144 @@ describe('WinnerService', () => {
       ];
       const check = service.checkVertical({
         board: board5x5,
+        boardResult,
+        playerIdentities: ['X', 'O'],
+      });
+      expect(check).toEqual('X');
+    });
+  });
+
+  describe('Check Diagonal', () => {
+    it('should return the winner on 3x3 board', () => {
+      const boardResult = [
+        ['X', 1, 2],
+        [3, 'X', 5],
+        [6, 7, 'X'],
+      ];
+      const check = service.checkDiagonal({
+        board: board3x3,
+        boardResult,
+        playerIdentities: ['X', 'O'],
+      });
+      expect(check).toBe('X');
+    });
+
+    it('should return the winner on 3x3 board (reversed)', () => {
+      const boardResult = [
+        [0, 1, 'X'],
+        [3, 'X', 5],
+        ['X', 7, 8],
+      ];
+      const check = service.checkDiagonal({
+        board: board3x3,
+        boardResult,
+        playerIdentities: ['X', 'O'],
+      });
+      expect(check).toBe('X');
+    });
+
+    it('should return the winner on 4x4 board', () => {
+      const boardResult = [
+        [0, 1, 'X', 3],
+        [4, 'X', 6, 7],
+        [8, 9, 'X', 11],
+        [12, 13, 14, 'X'],
+      ];
+      const check = service.checkDiagonal({
+        board: board4x4,
+        boardResult,
+        playerIdentities: ['X', 'O'],
+      });
+      expect(check).toBe('X');
+    });
+
+    it('should return the winner on 4x4 with direction top-left to bottom', () => {
+      const boardResult = [
+        [0, 1, 2, 3],
+        ['X', 5, 6, 7],
+        ['O', 'X', 10, 11],
+        ['X', 'O', 'X', 15],
+      ];
+      const check = service.checkDiagonal({
+        board: board4x4,
+        boardResult,
+        playerIdentities: ['X', 'O'],
+      });
+      expect(check).toBe('X');
+    });
+
+    it('should return the winner on 4x4 with direction top-left to right', () => {
+      const boardResult = [
+        [0, 'X', 2, 3],
+        [4, 5, 'X', 7],
+        [8, 9, 10, 'X'],
+        [12, 13, 14, 15],
+      ];
+      const check = service.checkDiagonal({
+        board: board4x4,
+        boardResult,
+        playerIdentities: ['X', 'O'],
+      });
+      expect(check).toBe('X');
+    });
+
+    it('should return the winner on 4x4 board with direction bottom-left to top', () => {
+      const boardResult = [
+        [0, 1, 'X', 3],
+        [4, 'X', 6, 7],
+        ['X', 9, 10, 11],
+        [12, 13, 14, 15],
+      ];
+      const check = service.checkDiagonal({
+        board: board4x4,
+        boardResult,
+        playerIdentities: ['X', 'O'],
+      });
+      expect(check).toBe('X');
+    });
+
+    it('should return the winner on 4x4 board with direction bottom-left to right', () => {
+      const boardResult = [
+        [0, 1, 2, 3],
+        [4, 5, 6, 'X'],
+        [8, 9, 'X', 11],
+        [12, 'X', 14, 15],
+      ];
+      const check = service.checkDiagonal({
+        board: board4x4,
+        boardResult,
+        playerIdentities: ['X', 'O'],
+      });
+      expect(check).toBe('X');
+    });
+
+    it('should return the winner on 5x5 board', () => {
+      const boardResult = [
+        ['X', 1, 'X', 3, 4],
+        [5, 'X', 7, 8, 9],
+        [10, 11, 'X', 13, 14],
+        [15, 16, 'X', 'X', 19],
+        [20, 21, 'X', 23, 'X'],
+      ];
+      const check = service.checkDiagonal({
+        board: board5x5,
+        boardResult,
+        playerIdentities: ['X', 'O'],
+      });
+      expect(check).toEqual('X');
+    });
+
+    it('should return the winner on 6x6 board', () => {
+      const boardResult = [
+        [0, 1, 'X', 3, 4, 5],
+        [6, 'X', 8, 9, 10, 11],
+        [12, 13, 'X', 15, 16, 17],
+        [18, 19, 'X', 'X', 22, 23],
+        [24, 25, 'X', 27, 'X', 29],
+        [30, 31, 'X', 33, 34, 'X'],
+      ];
+      const check = service.checkDiagonal({
+        board: board6x6,
         boardResult,
         playerIdentities: ['X', 'O'],
       });

@@ -11,7 +11,72 @@ export class WinnerService {
   constructor(private readonly rulesService: RulesService) {}
 
   checkWinner(params: WinnerCheckingParams) {
-    return merge([this.checkHorizontal(params), this.checkVertical(params)]);
+    return merge([
+      this.checkHorizontal(params),
+      this.checkVertical(params),
+      this.checkDiagonal(params),
+    ]);
+  }
+
+  checkDiagonal(params: WinnerCheckingParams) {
+    const diagonalBoard = this.constructBoardDiagonals(params.board);
+    const diagonalBoardResult = this.constructBoardDiagonals(
+      params.boardResult
+    );
+    return this.checkHorizontal({
+      ...params,
+      board: diagonalBoard as Board,
+      boardResult: diagonalBoardResult as BoardResult,
+    });
+  }
+
+  constructBoardDiagonals(board: Board | BoardResult): Board | BoardResult {
+    const marksCount = this.rulesService.getMarksCount(board.length);
+    const loopCount = board.length - marksCount + 1;
+    const loopCountArray = Array.from(Array(loopCount));
+
+    const boardSize = board.length;
+    const boardSizeArray = Array.from(Array(boardSize));
+
+    // From top left to bottom right (\) (to right direction).
+    const boardTopLeftToRight = loopCountArray.map((_, rowIdx) =>
+      boardSizeArray.slice(0, boardSize - rowIdx).map((_, itemIdx) => {
+        const item = rowIdx + itemIdx;
+        return board[itemIdx][item];
+      })
+    );
+
+    // From top left to bottom right (\) (to bottom direction).
+    const boardTopLeftToBottom = loopCountArray.map((_, rowIdx) =>
+      boardSizeArray.slice(0, boardSize - rowIdx).map((_, itemIdx) => {
+        const row = rowIdx + itemIdx;
+        return board[row][itemIdx];
+      })
+    );
+
+    // From bottom left to top right (/) (to top direction).
+    const boardBottomLeftToTop = loopCountArray.map((_, rowIdx) =>
+      boardSizeArray.slice(0, boardSize - rowIdx).map((_, itemIdx) => {
+        const row = boardSize - 1 - rowIdx - itemIdx;
+        return board[row][itemIdx];
+      })
+    );
+
+    // From bottom left to top right (/) (to right direction).
+    const boardBottomLeftToRight = loopCountArray.map((_, rowIdx) =>
+      boardSizeArray.slice(0, boardSize - rowIdx).map((_, itemIdx) => {
+        const row = boardSize - 1 - itemIdx;
+        const item = rowIdx + itemIdx;
+        return board[row][item];
+      })
+    );
+
+    return [
+      ...boardTopLeftToRight,
+      ...boardTopLeftToBottom,
+      ...boardBottomLeftToTop,
+      ...boardBottomLeftToRight,
+    ];
   }
 
   checkVertical(params: WinnerCheckingParams) {
