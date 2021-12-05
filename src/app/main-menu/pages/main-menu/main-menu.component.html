@@ -1,7 +1,10 @@
 <h1 class="title">{{ appTitle }}</h1>
 
 <div class="menu-list">
-  <app-primary-button class="menu-item-button" routerLink="/play/vs-friend"
+  <app-primary-button
+    class="menu-item-button"
+    routerLink="/play/vs-friend"
+    [replaceUrl]="true"
     >VS Friend</app-primary-button
   >
 </div>
