@@ -92,7 +92,7 @@ export class PlayOptionsComponent implements OnInit {
 
   private createRoom(name: string) {
     return this.roomService
-      .createRoom()
+      .createRoom({ boardSize: this.boardSizeControl.value })
       .pipe(
         switchMap((roomId) =>
           combineLatest([

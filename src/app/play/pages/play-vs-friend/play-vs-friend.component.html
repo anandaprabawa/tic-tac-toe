@@ -1,3 +1,7 @@
-<app-board (finish)="onFinish($event)"></app-board>
+<app-board
+  *ngIf="!uiService.loadingScreen$.value"
+  (finish)="onFinish($event)"
+  [size]="boardSize"
+></app-board>
 
 <app-nav-menu></app-nav-menu>
