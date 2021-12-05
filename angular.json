@@ -99,6 +99,16 @@
           "options": {
             "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
+        },
+        "deploy": {
+          "builder": "@angular/fire:deploy",
+          "options": {
+            "prerender": false,
+            "ssr": false,
+            "browserTarget": "tic-tac-toe:build:production",
+            "firebaseProject": "tic-tac-toe-awepe",
+            "firebaseHostingSite": "tic-tac-toe-awepe"
+          }
         }
       }
     }
