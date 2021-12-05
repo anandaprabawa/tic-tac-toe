@@ -13,7 +13,12 @@
     >
       <div class="square">
         <div class="item" (click)="makeMove(rowIndex, itemIndex)">
-          {{ item | hideBoardKey }}
+          <ng-container *ngIf="item === player1Identity">
+            <mat-icon svgIcon="close" class="icon"></mat-icon>
+          </ng-container>
+          <ng-container *ngIf="item === player2Identity">
+            <mat-icon svgIcon="circle" class="icon"></mat-icon>
+          </ng-container>
         </div>
       </div>
     </div>
