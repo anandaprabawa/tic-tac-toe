@@ -46,11 +46,6 @@ export class BoardComponent implements OnInit, OnDestroy {
     this.winner$
       .pipe(takeUntil(this.destroy$), delay(100))
       .subscribe((winner) => {
-        if (winner) {
-          alert(`Congratulation ${winner}, you win!`);
-        } else {
-          alert('Draw. No one winning this game T_T');
-        }
         this.finish.emit({
           winner: winner as BoardFinish['winner'],
           isDraw: !winner,
