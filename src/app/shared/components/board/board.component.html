@@ -1,7 +1,7 @@
 <div class="board">
   <div
     *ngFor="
-      let row of boardSquares$ | async;
+      let row of boardResult$ | async;
       index as rowIndex;
       trackBy: trackByRow
     "

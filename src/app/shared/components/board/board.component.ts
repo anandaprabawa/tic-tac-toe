@@ -12,15 +12,13 @@ import {
   delay,
   filter,
   map,
-  merge,
-  of,
   skip,
   Subject,
   switchMap,
   takeUntil,
 } from 'rxjs';
 import { WinnerService } from 'src/app/core/services/winner.service';
-import { Board } from '../../../core/types/board.type';
+import { Board, BoardResult } from '../../../core/types/board.type';
 import { BoardFinish } from './board-finish.type';
 
 @Component({
@@ -34,7 +32,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   @Input() player2Identity = 'O';
   playerTurn: 1 | 2 = 1;
 
-  boardSquares$ = new BehaviorSubject<Board>([]);
+  board: Board = [];
+  boardResult$ = new BehaviorSubject<BoardResult>([]);
   destroy$ = new Subject<void>();
 
   @Output() finish = new EventEmitter<BoardFinish>();
@@ -42,7 +41,8 @@ export class BoardComponent implements OnInit, OnDestroy {
   constructor(private readonly winnerService: WinnerService) {}
 
   ngOnInit() {
-    this.boardSquares$.next(this.createBoard());
+    this.board = this.createBoard();
+    this.boardResult$.next(this.board);
     this.winner$
       .pipe(takeUntil(this.destroy$), delay(100))
       .subscribe((winner) => {
@@ -107,16 +107,16 @@ export class BoardComponent implements OnInit, OnDestroy {
   }
 
   makeMove(rowIndex: number, itemIndex: number) {
-    const board = [...this.boardSquares$.value];
+    const boardResult = [...this.boardResult$.value];
 
-    if (typeof board[rowIndex][itemIndex] !== 'number') {
+    if (typeof boardResult[rowIndex][itemIndex] !== 'number') {
       // Other players cannot modify the existing marks.
       return;
     }
 
-    board[rowIndex][itemIndex] = this.currentPlayer.identity;
+    boardResult[rowIndex][itemIndex] = this.currentPlayer.identity;
 
-    this.boardSquares$.next(board);
+    this.boardResult$.next(boardResult);
     this.changePlayerTurn();
   }
 
@@ -128,29 +128,25 @@ export class BoardComponent implements OnInit, OnDestroy {
     }
   }
 
-  private readonly boardItemFinished$ = this.boardSquares$.pipe(
-    map((board) =>
-      board.every((row) => row.every((item) => typeof item !== 'number'))
+  private readonly boardItemFinished$ = this.boardResult$.pipe(
+    map((boardResult) =>
+      boardResult.every((row) => row.every((item) => typeof item !== 'number'))
     )
   );
 
-  private readonly winner$ = this.boardSquares$.pipe(
+  private readonly winner$ = this.boardResult$.pipe(
     skip(1),
-    switchMap((board) =>
-      combineLatest([this.boardItemFinished$, this.checkWinner(board)])
+    switchMap((boardResult) =>
+      combineLatest([
+        this.boardItemFinished$,
+        this.winnerService.checkWinner({
+          board: this.board,
+          boardResult: boardResult,
+          playerIdentities: [this.player1Identity, this.player2Identity],
+        }),
+      ])
     ),
     filter(([boardItemFinished, winner]) => !!boardItemFinished || !!winner),
     map(([, winner]) => winner)
   );
-
-  private checkWinner(board: Board) {
-    return merge(
-      of(
-        this.winnerService.checkHorizontal({
-          board,
-          playerIdentities: [this.player1Identity, this.player2Identity],
-        })
-      )
-    );
-  }
 }

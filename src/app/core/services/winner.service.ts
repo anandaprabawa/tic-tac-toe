@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BoardItem } from '../types/board.type';
+import { merge } from 'rxjs';
+import { Board, BoardResult, BoardResultItem } from '../types/board.type';
 import { WinnerCheckingParams } from '../types/winner.type';
 import { RulesService } from './rules.service';
 
@@ -9,9 +10,29 @@ import { RulesService } from './rules.service';
 export class WinnerService {
   constructor(private readonly rulesService: RulesService) {}
 
-  checkHorizontal(params: WinnerCheckingParams): BoardItem | undefined {
-    let winner: BoardItem | undefined;
-    for (const row of params.board) {
+  checkWinner(params: WinnerCheckingParams) {
+    return merge([this.checkHorizontal(params), this.checkVertical(params)]);
+  }
+
+  checkVertical(params: WinnerCheckingParams) {
+    const columnBoard = this.constructBoardColumns(params.board);
+    const columnBoardResult = this.constructBoardColumns(params.boardResult);
+    return this.checkHorizontal({
+      ...params,
+      board: columnBoard as Board,
+      boardResult: columnBoardResult as BoardResult,
+    });
+  }
+
+  constructBoardColumns(board: Board | BoardResult): Board | BoardResult {
+    return board.map((row, rowIndex) =>
+      row.map((_, itemIndex) => board[itemIndex][rowIndex])
+    );
+  }
+
+  checkHorizontal(params: WinnerCheckingParams): BoardResultItem | undefined {
+    let winner: BoardResultItem | undefined;
+    for (const [rowIndex, row] of params.boardResult.entries()) {
       // Get player marks in this row.
       let playerMarks = row.filter((item) =>
         this.getPlayerMark(item, params.playerIdentities)
@@ -21,9 +42,12 @@ export class WinnerService {
       // Stop process and continue to the next row.
       if (!playerMarks.length) continue;
 
-      const winningCombinations = this.getRowWinningCombination(row);
+      const winningCombinations = this.getRowWinningCombination(
+        params.board[rowIndex]
+      );
       const rowValueInWinningCombinations = winningCombinations.map(
-        (combination) => combination.map((idx) => row[idx])
+        (combination, combinationIdx) =>
+          combination.map((_, idx) => row[combinationIdx + idx])
       );
 
       winner = playerMarks.find((player) => {
@@ -32,18 +56,18 @@ export class WinnerService {
         );
       });
 
-      break;
+      if (winner) break;
     }
     return winner;
   }
 
-  getRowWinningCombination(row: BoardItem[]) {
+  getRowWinningCombination(row: number[]) {
     const marksCount = this.rulesService.getMarksCount(row.length);
     const loopCount = row.length - marksCount + 1;
     const combinations: number[][] = [];
     for (let index = 0; index < loopCount; index++) {
       const combination = Array.from(Array(marksCount)).map(
-        (_, i) => index + i
+        (_, i) => row[index + i]
       );
       combinations.push(combination);
     }
@@ -51,7 +75,7 @@ export class WinnerService {
   }
 
   private getPlayerMark(
-    item: BoardItem,
+    item: BoardResultItem,
     players: string[]
   ): string | undefined {
     // Player identity should be a string,
