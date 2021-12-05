@@ -3,7 +3,7 @@
 <div class="card">
   <h2 class="title">Play Options</h2>
 
-  <form [formGroup]="form" class="form">
+  <form [formGroup]="form" class="form" (submit)="startGame($event)">
     <mat-form-field appearance="fill" class="full-width">
       <mat-label>Board Size</mat-label>
       <input
@@ -24,14 +24,7 @@
     </mat-form-field>
 
     <div class="start-button-wrapper">
-      <button
-        mat-raised-button
-        color="primary"
-        type="submit"
-        (click)="startGame()"
-      >
-        Start
-      </button>
+      <button mat-raised-button color="primary" type="submit">Start</button>
     </div>
   </form>
 </div>

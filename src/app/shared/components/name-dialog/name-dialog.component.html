@@ -1,0 +1,15 @@
+<mat-dialog-content>
+  <form class="form" [formGroup]="form" (submit)="onSave($event)">
+    <mat-form-field appearance="fill">
+      <mat-label>Your Name</mat-label>
+      <input matInput formControlName="name" />
+      <mat-error *ngIf="nameControl.invalid">{{
+        getNameErrorMessage()
+      }}</mat-error>
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" type="submit" class="button-save">
+      Save
+    </button>
+  </form>
+</mat-dialog-content>

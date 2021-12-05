@@ -1,7 +1,12 @@
-import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
+import { delay, filter, of, switchMap, take, tap } from 'rxjs';
+import { RoomService } from 'src/app/core/services/room.service';
+import { UiService } from 'src/app/core/services/ui.service';
 import { BoardFinish } from 'src/app/shared/components/board/board-finish.type';
+import { ErrorDialogComponent } from 'src/app/shared/components/error-dialog/error-dialog.component';
+import { ErrorDialogData } from 'src/app/shared/components/error-dialog/error-dialog.type';
 import { WinnerDialogComponent } from 'src/app/shared/components/winner-dialog/winner-dialog.component';
 import { WinnerDialogData } from 'src/app/shared/components/winner-dialog/winner-dialog.type';
 
@@ -10,11 +15,44 @@ import { WinnerDialogData } from 'src/app/shared/components/winner-dialog/winner
   templateUrl: './play-vs-friend.component.html',
   styleUrls: ['./play-vs-friend.component.scss'],
 })
-export class PlayVsFriendComponent {
+export class PlayVsFriendComponent implements OnInit {
+  errorDialogRef?: MatDialogRef<ErrorDialogComponent>;
+
   constructor(
     private readonly router: Router,
-    private readonly dialog: MatDialog
+    private readonly route: ActivatedRoute,
+    private readonly dialog: MatDialog,
+    private readonly roomService: RoomService,
+    private readonly uiService: UiService
   ) {}
+
+  get roomIdParam() {
+    return this.route.snapshot.queryParams['roomId'];
+  }
+
+  ngOnInit() {
+    of(true)
+      .pipe(
+        delay(0),
+        tap(() => this.uiService.loadingScreen$.next(true)),
+        switchMap(() => this.roomService.validateRoom(this.roomIdParam)),
+        take(1),
+        tap(() => this.uiService.loadingScreen$.next(false)),
+        tap((exists) => {
+          if (!exists) {
+            this.showErrorDialog(
+              'Room not found. You will be redirected to main menu.'
+            );
+          }
+        }),
+        filter((exists) => !exists),
+        delay(3000),
+        tap(() => this.errorDialogRef?.close()),
+        delay(100),
+        tap(() => this.redirectToMainMenu())
+      )
+      .subscribe();
+  }
 
   onFinish(params: BoardFinish) {
     if (params.winner) {
@@ -31,5 +69,24 @@ export class PlayVsFriendComponent {
     dialogRef.beforeClosed().subscribe(() => {
       this.router.navigate(['..'], { replaceUrl: true });
     });
+  }
+
+  private showErrorDialog(message: string) {
+    this.errorDialogRef = this.dialog.open<
+      ErrorDialogComponent,
+      ErrorDialogData
+    >(ErrorDialogComponent, {
+      autoFocus: false,
+      disableClose: true,
+      data: { message: message },
+    });
+
+    this.errorDialogRef.beforeClosed().subscribe(() => {
+      this.redirectToMainMenu();
+    });
+  }
+
+  private redirectToMainMenu() {
+    this.router.navigateByUrl('/', { replaceUrl: true });
   }
 }

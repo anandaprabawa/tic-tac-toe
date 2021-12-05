@@ -12,6 +12,8 @@ export const environment = {
     authDomain: 'tic-tac-toe-awepe.firebaseapp.com',
     messagingSenderId: '445821927835',
     measurementId: 'G-QPW8Q8ECYH',
+    databaseURL:
+      'https://tic-tac-toe-awepe-default-rtdb.asia-southeast1.firebasedatabase.app',
   },
   production: false,
   appTitle: 'Tic Tac Toe',

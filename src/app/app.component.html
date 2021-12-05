@@ -1,3 +1,5 @@
 <div class="main-app">
   <router-outlet></router-outlet>
 </div>
+
+<app-loading-screen *ngIf="uiService.loadingScreen$.value"></app-loading-screen>
