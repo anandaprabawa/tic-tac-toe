@@ -101,9 +101,12 @@ export class PlayVsFriendComponent implements OnInit {
       { data: { winner }, autoFocus: false, disableClose: true }
     );
 
-    dialogRef.beforeClosed().subscribe(() => {
-      this.router.navigate(['..'], { replaceUrl: true });
-    });
+    dialogRef
+      .beforeClosed()
+      .pipe(switchMap(() => this.roomService.deleteRoom(this.roomIdParam)))
+      .subscribe(() => {
+        this.router.navigate(['..'], { replaceUrl: true });
+      });
   }
 
   private showErrorDialog(message: string) {
