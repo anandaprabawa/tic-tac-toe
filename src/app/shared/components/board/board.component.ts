@@ -18,6 +18,8 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs';
+import { Player } from 'src/app/core/models/player.model';
+import { Room } from 'src/app/core/models/room.model';
 import { WinnerService } from 'src/app/core/services/winner.service';
 import { Board, BoardResult } from '../../../core/types/board.type';
 import { BoardFinish } from './board-finish.type';
@@ -32,8 +34,8 @@ export class BoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() player1Name = 'X';
   @Input() player2Name = 'O';
   @Input() result: BoardResult = [];
-
-  playerTurn: 1 | 2 = 1;
+  @Input() playerTurn: Room['playerTurn'] = 1;
+  @Input() me?: Player;
 
   board: Board = [];
   boardResult$ = new BehaviorSubject<BoardResult>([]);
@@ -41,6 +43,7 @@ export class BoardComponent implements OnInit, OnDestroy, OnChanges {
 
   @Output() finish = new EventEmitter<BoardFinish>();
   @Output() boardResult = new EventEmitter<BoardResult>();
+  @Output() playerTurnChange = new EventEmitter();
 
   constructor(private readonly winnerService: WinnerService) {}
 
@@ -57,8 +60,10 @@ export class BoardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const board = changes['result'].currentValue;
-    this.boardResult$.next(board?.length ? board : this.createBoard());
+    if (changes['result']) {
+      const board = changes['result'].currentValue;
+      this.boardResult$.next(board?.length ? board : this.createBoard());
+    }
   }
 
   ngOnDestroy() {
@@ -117,19 +122,20 @@ export class BoardComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
 
+    if (this.me?.player !== this.playerTurn) {
+      // Prevent marking the square if current player is already make a marks.
+      return;
+    }
+
     boardResult[rowIndex][itemIndex] = this.currentPlayer.identity;
 
-    // this.boardResult$.next(boardResult);
     this.boardResult.emit(boardResult);
     this.changePlayerTurn();
   }
 
   private changePlayerTurn() {
-    if (this.currentPlayer.turn === 1) {
-      this.playerTurn = 2;
-    } else {
-      this.playerTurn = 1;
-    }
+    const turn = this.currentPlayer.turn === 1 ? 2 : 1;
+    this.playerTurnChange.emit(turn);
   }
 
   private readonly boardItemFinished$ = this.boardResult$.pipe(

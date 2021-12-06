@@ -68,4 +68,17 @@ export class RoomService {
       map((snapshot) => Object.keys(snapshot).map((key) => snapshot[key]))
     );
   }
+
+  getPlayerTurn(roomId?: string): Observable<Room['playerTurn'] | null> {
+    if (!roomId) return of(null);
+    const refPath = `${this.roomsPath}/${roomId}/playerTurn`;
+    const dbRef = ref(this.db, refPath);
+    return objectVal<Room['playerTurn']>(dbRef);
+  }
+
+  changePlayerTurn(roomId: string, playerTurn: Room['playerTurn']) {
+    const refPath = `${this.roomsPath}/${roomId}/playerTurn`;
+    const dbRef = ref(this.db, refPath);
+    return from(set(dbRef, playerTurn));
+  }
 }

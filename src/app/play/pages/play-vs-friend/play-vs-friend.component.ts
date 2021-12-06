@@ -2,9 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
-  catchError,
   combineLatest,
   delay,
+  filter,
   map,
   of,
   share,
@@ -14,6 +14,7 @@ import {
   takeUntil,
   tap,
 } from 'rxjs';
+import { Player } from 'src/app/core/models/player.model';
 import { Room } from 'src/app/core/models/room.model';
 import { PlayerService } from 'src/app/core/services/player.service';
 import { RoomService } from 'src/app/core/services/room.service';
@@ -38,6 +39,8 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
   room?: Room;
 
   boardResult: BoardResult = [];
+  playerTurn: Room['playerTurn'] = 1;
+  me?: Player;
   readonly destroy$ = new Subject<void>();
 
   constructor(
@@ -65,20 +68,18 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
     switchMap((roomId) =>
       roomId ? this.roomService.getRoom(roomId) : of(null)
     ),
-    map((room) => {
-      if (!room) throw new Error('room_not_found');
-      return room;
+    tap((room) => {
+      if (!room) {
+        this.uiService.loadingScreen$.next(false);
+        this.handleInvalidRoom();
+      }
     }),
+    filter((room) => !!room),
+    map((room) => room as Room),
     tap((room) => {
       this.room = room;
     }),
-    share(),
-    catchError((err) => {
-      if (err.message === 'room_not_found') {
-        this.handleInvalidRoom();
-      }
-      throw err;
-    })
+    share()
   );
 
   readonly currentPlayerInRoom$ = this.room$.pipe(
@@ -111,6 +112,20 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
     this.boardResult$.pipe(takeUntil(this.destroy$)).subscribe((result) => {
       this.boardResult = result || [];
     });
+
+    this.roomService
+      .getPlayerTurn(this.roomIdParam)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((playerTurn) => {
+        this.playerTurn = playerTurn || 1;
+      });
+
+    this.playerService
+      .getMe(this.roomIdParam)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((player) => {
+        this.me = player;
+      });
   }
 
   ngOnDestroy() {
@@ -121,6 +136,11 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
   onBoardResult(result: BoardResult) {
     if (!this.roomIdParam) return;
     this.roomService.saveBoardResult(this.roomIdParam, result);
+  }
+
+  onPlayerTurnChange(turn: number) {
+    if (!this.roomIdParam) return;
+    this.roomService.changePlayerTurn(this.roomIdParam, turn);
   }
 
   onFinish(params: BoardFinish) {
@@ -217,6 +237,6 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
       'Room not found. You will be redirected to main menu.'
     );
     setTimeout(() => dialogRef.close(), 3000);
-    setTimeout(() => this.redirectToMainMenu(), 100);
+    setTimeout(() => this.redirectToMainMenu(), 3100);
   }
 }
