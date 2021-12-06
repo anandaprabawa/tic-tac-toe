@@ -36,6 +36,7 @@ export class BoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() result: BoardResult = [];
   @Input() playerTurn: Room['playerTurn'] = 1;
   @Input() me?: Player;
+  @Input() waiting = true;
 
   board: Board = [];
   boardResult$ = new BehaviorSubject<BoardResult>([]);

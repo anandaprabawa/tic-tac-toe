@@ -41,6 +41,7 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
   boardResult: BoardResult = [];
   playerTurn: Room['playerTurn'] = 1;
   me?: Player;
+  canPlay?: boolean;
   readonly destroy$ = new Subject<void>();
 
   constructor(
@@ -95,6 +96,9 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
   readonly boardResult$ = this.roomService.getBoardResult(this.roomIdParam);
 
   readonly players$ = this.playerService.getPlayers(this.roomIdParam);
+  readonly canPlay$ = this.players$.pipe(
+    map((players) => players.length === 2)
+  );
 
   ngOnInit() {
     of(true)
@@ -132,6 +136,10 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
       .subscribe((player) => {
         this.me = player;
       });
+
+    this.canPlay$.pipe(takeUntil(this.destroy$)).subscribe((canPlay) => {
+      this.canPlay = canPlay;
+    });
   }
 
   ngOnDestroy() {

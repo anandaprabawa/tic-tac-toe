@@ -10,6 +10,25 @@
   max-width: 500px;
   width: 100%;
   margin: 0 auto;
+  position: relative;
+
+  .waiting-opponent {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.5);
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .title {
+      font-size: 32px;
+      color: var(--primary-color);
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.8);
+    }
+  }
 }
 
 .board-row {
@@ -20,7 +39,6 @@
 
 .board-item {
   background: #ffffff;
-  max-width: 100px;
   width: 100%;
   position: relative;
   border: 1px solid var(--background-color);
