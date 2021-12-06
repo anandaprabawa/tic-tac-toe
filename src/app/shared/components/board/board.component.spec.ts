@@ -30,7 +30,7 @@ describe('BoardComponent', () => {
       [3, 4, 5],
       [6, 7, 8],
     ];
-    expect(component.boardResult$.value).toEqual(expectedBoard);
+    expect(component.board).toEqual(expectedBoard);
   });
 
   it('should structured board array for size 5x5', () => {
@@ -43,6 +43,6 @@ describe('BoardComponent', () => {
       [15, 16, 17, 18, 19],
       [20, 21, 22, 23, 24],
     ];
-    expect(component.boardResult$.value).toEqual(expectedBoard);
+    expect(component.board).toEqual(expectedBoard);
   });
 });

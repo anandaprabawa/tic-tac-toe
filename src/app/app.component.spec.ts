@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { Auth } from '@angular/fire/auth';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 
@@ -7,6 +8,7 @@ describe('AppComponent', () => {
     await TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       declarations: [AppComponent],
+      providers: [{ provide: Auth, useValue: {} }],
     }).compileComponents();
   });
 

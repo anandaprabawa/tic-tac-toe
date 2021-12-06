@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
 import { NameDialogComponent } from './name-dialog.component';
 
 describe('NameDialogComponent', () => {
@@ -8,6 +10,8 @@ describe('NameDialogComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [NameDialogComponent],
+      imports: [ReactiveFormsModule],
+      providers: [{ provide: MatDialogRef, useValue: {} }],
     }).compileComponents();
   });
 

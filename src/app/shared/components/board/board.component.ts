@@ -14,6 +14,7 @@ import {
   delay,
   filter,
   map,
+  skip,
   Subject,
   switchMap,
   takeUntil,
@@ -146,6 +147,7 @@ export class BoardComponent implements OnInit, OnDestroy, OnChanges {
   );
 
   private readonly winner$ = this.boardResult$.pipe(
+    skip(1),
     switchMap((boardResult) =>
       combineLatest([
         this.boardItemFinished$,

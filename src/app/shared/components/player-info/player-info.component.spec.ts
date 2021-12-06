@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { PlayerInfoComponent } from './player-info.component';
 
 describe('PlayerInfoComponent', () => {
@@ -8,9 +8,9 @@ describe('PlayerInfoComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PlayerInfoComponent ]
-    })
-    .compileComponents();
+      declarations: [PlayerInfoComponent],
+      imports: [MatSnackBarModule],
+    }).compileComponents();
   });
 
   beforeEach(() => {

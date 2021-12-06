@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { WinnerDialogComponent } from './winner-dialog.component';
 
 describe('WinnerDialogComponent', () => {
@@ -8,6 +9,7 @@ describe('WinnerDialogComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [WinnerDialogComponent],
+      providers: [{ provide: MAT_DIALOG_DATA, useValue: {} }],
     }).compileComponents();
   });
 

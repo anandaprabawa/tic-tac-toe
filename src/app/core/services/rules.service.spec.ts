@@ -1,11 +1,14 @@
 import { TestBed } from '@angular/core/testing';
+import { Database } from '@angular/fire/database';
 import { RulesService } from './rules.service';
 
 describe('RulesService', () => {
   let service: RulesService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [{ provide: Database, useValue: {} }],
+    });
     service = TestBed.inject(RulesService);
   });
 
