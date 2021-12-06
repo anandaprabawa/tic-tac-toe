@@ -66,6 +66,10 @@ export class PlayOptionsComponent implements OnInit {
 
   startGame(event: Event) {
     event.preventDefault();
+
+    // Check if options valid
+    if (this.form.invalid) return;
+
     const dialogRef = this.dialog.open<NameDialogComponent, unknown, string>(
       NameDialogComponent,
       { autoFocus: false }

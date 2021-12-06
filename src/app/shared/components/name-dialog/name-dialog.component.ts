@@ -30,6 +30,7 @@ export class NameDialogComponent {
 
   onSave(event: Event) {
     event.preventDefault();
+    if (this.form.invalid) return;
     this.dialogRef.close(this.nameControl.value);
   }
 }
