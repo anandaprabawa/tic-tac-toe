@@ -171,12 +171,9 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
       { data: { winner }, autoFocus: false, disableClose: true }
     );
 
-    dialogRef
-      .beforeClosed()
-      .pipe(switchMap(() => this.roomService.deleteRoom(this.roomIdParam)))
-      .subscribe(() => {
-        this.router.navigateByUrl('/', { replaceUrl: true });
-      });
+    dialogRef.beforeClosed().subscribe(() => {
+      this.router.navigateByUrl('/', { replaceUrl: true });
+    });
   }
 
   private showDrawDialog() {
@@ -184,12 +181,9 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
       autoFocus: false,
     });
 
-    dialogRef
-      .beforeClosed()
-      .pipe(switchMap(() => this.roomService.deleteRoom(this.roomIdParam)))
-      .subscribe(() => {
-        this.router.navigateByUrl('/', { replaceUrl: true });
-      });
+    dialogRef.beforeClosed().subscribe(() => {
+      this.router.navigateByUrl('/', { replaceUrl: true });
+    });
   }
 
   private showErrorDialog(message: string) {
