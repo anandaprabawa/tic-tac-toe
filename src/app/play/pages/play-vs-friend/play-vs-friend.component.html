@@ -1,17 +1,4 @@
 <div class="wrapper">
-  <app-board
-    *ngIf="!uiService.loadingScreen$.value && room"
-    (finish)="onFinish($event)"
-    (boardResult)="onBoardResult($event)"
-    (playerTurnChange)="onPlayerTurnChange($event)"
-    [size]="room.boardSize"
-    [player1Name]="player1?.name || 'X'"
-    [player2Name]="player2?.name || 'O'"
-    [result]="boardResult"
-    [playerTurn]="playerTurn"
-    [me]="me"
-  ></app-board>
-
   <div *ngIf="players$ | async as players" class="players">
     <app-player-info
       [player]="1"
@@ -25,6 +12,19 @@
       [invitationLink]="invitationLink"
     ></app-player-info>
   </div>
+
+  <app-board
+    *ngIf="!uiService.loadingScreen$.value && room"
+    (finish)="onFinish($event)"
+    (boardResult)="onBoardResult($event)"
+    (playerTurnChange)="onPlayerTurnChange($event)"
+    [size]="room.boardSize"
+    [player1Name]="player1?.name || 'X'"
+    [player2Name]="player2?.name || 'O'"
+    [result]="boardResult"
+    [playerTurn]="playerTurn"
+    [me]="me"
+  ></app-board>
 </div>
 
 <app-nav-menu></app-nav-menu>
