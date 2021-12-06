@@ -53,6 +53,13 @@ export class RoomService {
     return from(remove(dbRef));
   }
 
+  playerExitRoom(roomId?: string, player?: number) {
+    if (!roomId || !player) return of(null);
+    const refPath = `${this.roomsPath}/${roomId}/players/${player - 1}/exit`;
+    const dbRef = ref(this.db, refPath);
+    return from(set(dbRef, true));
+  }
+
   saveBoardResult(roomId: string, result: BoardResult) {
     const refPath = `${this.roomsPath}/${roomId}/boardResult`;
     const dbRef = ref(this.db, refPath);

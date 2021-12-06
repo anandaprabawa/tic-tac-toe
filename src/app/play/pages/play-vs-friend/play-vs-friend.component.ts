@@ -140,6 +140,15 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
     this.canPlay$.pipe(takeUntil(this.destroy$)).subscribe((canPlay) => {
       this.canPlay = canPlay;
     });
+
+    this.players$
+      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        map((players) => players.length === 2 && players.every((p) => p.exit)),
+        filter((allPlayersExit) => allPlayersExit),
+        switchMap(() => this.roomService.deleteRoom(this.roomIdParam))
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {
@@ -171,9 +180,16 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
       { data: { winner }, autoFocus: false, disableClose: true }
     );
 
-    dialogRef.beforeClosed().subscribe(() => {
-      this.router.navigateByUrl('/', { replaceUrl: true });
-    });
+    dialogRef
+      .beforeClosed()
+      .pipe(
+        switchMap(() =>
+          this.roomService.playerExitRoom(this.roomIdParam, this.me?.player)
+        )
+      )
+      .subscribe(() => {
+        this.router.navigateByUrl('/', { replaceUrl: true });
+      });
   }
 
   private showDrawDialog() {
@@ -181,9 +197,16 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
       autoFocus: false,
     });
 
-    dialogRef.beforeClosed().subscribe(() => {
-      this.router.navigateByUrl('/', { replaceUrl: true });
-    });
+    dialogRef
+      .beforeClosed()
+      .pipe(
+        switchMap(() =>
+          this.roomService.playerExitRoom(this.roomIdParam, this.me?.player)
+        )
+      )
+      .subscribe(() => {
+        this.router.navigateByUrl('/', { replaceUrl: true });
+      });
   }
 
   private showErrorDialog(message: string) {
