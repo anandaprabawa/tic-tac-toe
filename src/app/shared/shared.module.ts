@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BoardModule } from './components/board/board.module';
 import { CenteredLayoutModule } from './components/centered-layout/centered-layout.module';
+import { DrawDialogModule } from './components/draw-dialog/draw-dialog.module';
 import { ErrorDialogModule } from './components/error-dialog/error-dialog.module';
 import { JoinRoomDialogModule } from './components/join-room-dialog/join-room-dialog.module';
 import { LoadingScreenModule } from './components/loading-screen/loading-screen.module';
@@ -22,6 +23,7 @@ import { WinnerDialogModule } from './components/winner-dialog/winner-dialog.mod
     LoadingScreenModule,
     ErrorDialogModule,
     JoinRoomDialogModule,
+    DrawDialogModule,
   ],
 })
 export class SharedModule {}

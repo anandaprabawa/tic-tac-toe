@@ -17,6 +17,7 @@ import { PlayerService } from 'src/app/core/services/player.service';
 import { RoomService } from 'src/app/core/services/room.service';
 import { UiService } from 'src/app/core/services/ui.service';
 import { BoardFinish } from 'src/app/shared/components/board/board-finish.type';
+import { DrawDialogComponent } from 'src/app/shared/components/draw-dialog/draw-dialog.component';
 import { ErrorDialogComponent } from 'src/app/shared/components/error-dialog/error-dialog.component';
 import { ErrorDialogData } from 'src/app/shared/components/error-dialog/error-dialog.type';
 import { JoinRoomDialogComponent } from 'src/app/shared/components/join-room-dialog/join-room-dialog.component';
@@ -92,6 +93,8 @@ export class PlayVsFriendComponent implements OnInit {
   onFinish(params: BoardFinish) {
     if (params.winner) {
       this.showWinnerDialog(params.winner);
+    } else {
+      this.showDrawDialog();
     }
   }
 
@@ -105,7 +108,20 @@ export class PlayVsFriendComponent implements OnInit {
       .beforeClosed()
       .pipe(switchMap(() => this.roomService.deleteRoom(this.roomIdParam)))
       .subscribe(() => {
-        this.router.navigate(['..'], { replaceUrl: true });
+        this.router.navigateByUrl('/', { replaceUrl: true });
+      });
+  }
+
+  private showDrawDialog() {
+    const dialogRef = this.dialog.open(DrawDialogComponent, {
+      autoFocus: false,
+    });
+
+    dialogRef
+      .beforeClosed()
+      .pipe(switchMap(() => this.roomService.deleteRoom(this.roomIdParam)))
+      .subscribe(() => {
+        this.router.navigateByUrl('/', { replaceUrl: true });
       });
   }
 
