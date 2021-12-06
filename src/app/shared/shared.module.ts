@@ -8,6 +8,7 @@ import { JoinRoomDialogModule } from './components/join-room-dialog/join-room-di
 import { LoadingScreenModule } from './components/loading-screen/loading-screen.module';
 import { NameDialogModule } from './components/name-dialog/name-dialog.module';
 import { NavMenuModule } from './components/nav-menu/nav-menu.module';
+import { PlayerInfoModule } from './components/player-info/player-info.module';
 import { PrimaryButtonModule } from './components/primary-button/primary-button.module';
 import { WinnerDialogModule } from './components/winner-dialog/winner-dialog.module';
 
@@ -24,6 +25,7 @@ import { WinnerDialogModule } from './components/winner-dialog/winner-dialog.mod
     ErrorDialogModule,
     JoinRoomDialogModule,
     DrawDialogModule,
+    PlayerInfoModule,
   ],
 })
 export class SharedModule {}

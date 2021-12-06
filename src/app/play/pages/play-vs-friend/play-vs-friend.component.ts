@@ -64,6 +64,10 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
     return this.room?.players[1];
   }
 
+  get invitationLink() {
+    return window.location.href;
+  }
+
   readonly room$ = of(this.roomIdParam).pipe(
     switchMap((roomId) =>
       roomId ? this.roomService.getRoom(roomId) : of(null)
@@ -89,6 +93,8 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
   );
 
   readonly boardResult$ = this.roomService.getBoardResult(this.roomIdParam);
+
+  readonly players$ = this.playerService.getPlayers(this.roomIdParam);
 
   ngOnInit() {
     of(true)

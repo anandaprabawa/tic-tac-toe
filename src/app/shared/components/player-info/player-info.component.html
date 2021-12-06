@@ -1,0 +1,13 @@
+<h4 class="name">
+  <ng-container *ngIf="name">{{ name }}</ng-container>
+  <ng-container *ngIf="!name">Player {{ player }}</ng-container>
+</h4>
+
+<h5 *ngIf="isMyTurn" class="turn">Your Turn</h5>
+
+<div *ngIf="!name" class="invitation">
+  <p>Invite player {{ player }} by sending them link!</p>
+  <button mat-flat-button color="primary" (click)="copyInvitationLink()">
+    Copy Link
+  </button>
+</div>

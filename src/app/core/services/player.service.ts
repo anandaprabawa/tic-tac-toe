@@ -47,4 +47,11 @@ export class PlayerService {
       )
     );
   }
+
+  getPlayers(roomId?: string): Observable<Player[]> {
+    if (!roomId) return of([]);
+    const refPath = `${this.roomService.roomsPath}/${roomId}/${this.playersPath}`;
+    const dbRef = ref(this.db, refPath);
+    return from(listVal<Player>(dbRef)).pipe(map((players) => players || []));
+  }
 }

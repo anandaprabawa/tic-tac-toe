@@ -1,0 +1,27 @@
+:host {
+  display: flex;
+  flex-direction: column;
+
+  &.right {
+    align-items: flex-end;
+  }
+}
+
+.name {
+  color: var(--primary-color);
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.turn {
+  color: #eeeeee;
+  font-size: 20px;
+  font-style: italic;
+}
+
+.invitation {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: #eeeeee;
+}
