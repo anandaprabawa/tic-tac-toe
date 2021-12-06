@@ -1,7 +1,15 @@
 import { Injectable } from '@angular/core';
-import { Database, get, ref, remove, set } from '@angular/fire/database';
+import {
+  Database,
+  get,
+  objectVal,
+  ref,
+  remove,
+  set,
+} from '@angular/fire/database';
 import { from, map, Observable, of } from 'rxjs';
 import { Room } from '../models/room.model';
+import { BoardResult, BoardResultItem } from '../types/board.type';
 import { GeneratedIdService } from './generated-id.service';
 import { RulesService } from './rules.service';
 
@@ -43,5 +51,21 @@ export class RoomService {
     const refPath = `${this.roomsPath}/${roomId}`;
     const dbRef = ref(this.db, refPath);
     return from(remove(dbRef));
+  }
+
+  saveBoardResult(roomId: string, result: BoardResult) {
+    const refPath = `${this.roomsPath}/${roomId}/boardResult`;
+    const dbRef = ref(this.db, refPath);
+    return from(set(dbRef, result));
+  }
+
+  getBoardResult(roomId?: string): Observable<BoardResult | null> {
+    if (!roomId) return of(null);
+    const refPath = `${this.roomsPath}/${roomId}/boardResult`;
+    const dbRef = ref(this.db, refPath);
+    return objectVal<Record<string, BoardResultItem[]>>(dbRef).pipe(
+      map((snapshot) => (snapshot ? snapshot : {})),
+      map((snapshot) => Object.keys(snapshot).map((key) => snapshot[key]))
+    );
   }
 }

@@ -1,21 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
+  catchError,
   combineLatest,
   delay,
-  filter,
   map,
   of,
   share,
+  Subject,
   switchMap,
   take,
+  takeUntil,
   tap,
 } from 'rxjs';
 import { Room } from 'src/app/core/models/room.model';
 import { PlayerService } from 'src/app/core/services/player.service';
 import { RoomService } from 'src/app/core/services/room.service';
 import { UiService } from 'src/app/core/services/ui.service';
+import { BoardResult } from 'src/app/core/types/board.type';
 import { BoardFinish } from 'src/app/shared/components/board/board-finish.type';
 import { DrawDialogComponent } from 'src/app/shared/components/draw-dialog/draw-dialog.component';
 import { ErrorDialogComponent } from 'src/app/shared/components/error-dialog/error-dialog.component';
@@ -31,8 +34,11 @@ import { WinnerDialogData } from 'src/app/shared/components/winner-dialog/winner
   templateUrl: './play-vs-friend.component.html',
   styleUrls: ['./play-vs-friend.component.scss'],
 })
-export class PlayVsFriendComponent implements OnInit {
+export class PlayVsFriendComponent implements OnInit, OnDestroy {
   room?: Room;
+
+  boardResult: BoardResult = [];
+  readonly destroy$ = new Subject<void>();
 
   constructor(
     private readonly router: Router,
@@ -59,9 +65,20 @@ export class PlayVsFriendComponent implements OnInit {
     switchMap((roomId) =>
       roomId ? this.roomService.getRoom(roomId) : of(null)
     ),
-    switchMap((room) => this.handleInvalidRoom(room)),
-    tap((room) => (this.room = room)),
-    share()
+    map((room) => {
+      if (!room) throw new Error('room_not_found');
+      return room;
+    }),
+    tap((room) => {
+      this.room = room;
+    }),
+    share(),
+    catchError((err) => {
+      if (err.message === 'room_not_found') {
+        this.handleInvalidRoom();
+      }
+      throw err;
+    })
   );
 
   readonly currentPlayerInRoom$ = this.room$.pipe(
@@ -69,6 +86,8 @@ export class PlayVsFriendComponent implements OnInit {
       room ? this.playerService.validateCurrentPlayerInRoom(room) : null
     )
   );
+
+  readonly boardResult$ = this.roomService.getBoardResult(this.roomIdParam);
 
   ngOnInit() {
     of(true)
@@ -88,6 +107,20 @@ export class PlayVsFriendComponent implements OnInit {
         })
       )
       .subscribe();
+
+    this.boardResult$.pipe(takeUntil(this.destroy$)).subscribe((result) => {
+      this.boardResult = result || [];
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  onBoardResult(result: BoardResult) {
+    if (!this.roomIdParam) return;
+    this.roomService.saveBoardResult(this.roomIdParam, result);
   }
 
   onFinish(params: BoardFinish) {
@@ -179,23 +212,11 @@ export class PlayVsFriendComponent implements OnInit {
     });
   }
 
-  private handleInvalidRoom(room?: Room | null) {
-    if (room) {
-      return of(room);
-    }
-
-    let dialogRef: MatDialogRef<ErrorDialogComponent>;
-    return of().pipe(
-      tap(() => {
-        dialogRef = this.showErrorDialog(
-          'Room not found. You will be redirected to main menu.'
-        );
-      }),
-      delay(3000),
-      tap(() => dialogRef?.close()),
-      delay(100),
-      tap(() => this.redirectToMainMenu()),
-      filter(() => false)
+  private handleInvalidRoom(): void {
+    const dialogRef = this.showErrorDialog(
+      'Room not found. You will be redirected to main menu.'
     );
+    setTimeout(() => dialogRef.close(), 3000);
+    setTimeout(() => this.redirectToMainMenu(), 100);
   }
 }

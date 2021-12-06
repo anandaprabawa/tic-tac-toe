@@ -1,9 +1,11 @@
 <app-board
   *ngIf="!uiService.loadingScreen$.value && room"
   (finish)="onFinish($event)"
+  (boardResult)="onBoardResult($event)"
   [size]="room.boardSize"
   [player1Name]="player1?.name || 'X'"
   [player2Name]="player2?.name || 'O'"
+  [result]="boardResult"
 ></app-board>
 
 <app-nav-menu></app-nav-menu>

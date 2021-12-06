@@ -2,9 +2,11 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   Output,
+  SimpleChanges,
 } from '@angular/core';
 import {
   BehaviorSubject,
@@ -12,7 +14,6 @@ import {
   delay,
   filter,
   map,
-  skip,
   Subject,
   switchMap,
   takeUntil,
@@ -26,10 +27,11 @@ import { BoardFinish } from './board-finish.type';
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss'],
 })
-export class BoardComponent implements OnInit, OnDestroy {
+export class BoardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() size = 3;
   @Input() player1Name = 'X';
   @Input() player2Name = 'O';
+  @Input() result: BoardResult = [];
 
   playerTurn: 1 | 2 = 1;
 
@@ -38,12 +40,12 @@ export class BoardComponent implements OnInit, OnDestroy {
   destroy$ = new Subject<void>();
 
   @Output() finish = new EventEmitter<BoardFinish>();
+  @Output() boardResult = new EventEmitter<BoardResult>();
 
   constructor(private readonly winnerService: WinnerService) {}
 
   ngOnInit() {
     this.board = this.createBoard();
-    this.boardResult$.next(this.board);
     this.winner$
       .pipe(takeUntil(this.destroy$), delay(100))
       .subscribe((winner) => {
@@ -52,6 +54,11 @@ export class BoardComponent implements OnInit, OnDestroy {
           isDraw: !winner,
         });
       });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    const board = changes['result'].currentValue;
+    this.boardResult$.next(board?.length ? board : this.createBoard());
   }
 
   ngOnDestroy() {
@@ -112,7 +119,8 @@ export class BoardComponent implements OnInit, OnDestroy {
 
     boardResult[rowIndex][itemIndex] = this.currentPlayer.identity;
 
-    this.boardResult$.next(boardResult);
+    // this.boardResult$.next(boardResult);
+    this.boardResult.emit(boardResult);
     this.changePlayerTurn();
   }
 
@@ -131,7 +139,6 @@ export class BoardComponent implements OnInit, OnDestroy {
   );
 
   private readonly winner$ = this.boardResult$.pipe(
-    skip(1),
     switchMap((boardResult) =>
       combineLatest([
         this.boardItemFinished$,
