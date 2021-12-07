@@ -2,12 +2,12 @@
   <div *ngIf="players$ | async as players" class="players">
     <app-player-info
       [player]="1"
-      [name]="players[0]?.name"
+      [name]="player1?.name"
       [isMyTurn]="playerTurn === 1"
     ></app-player-info>
     <app-player-info
       [player]="2"
-      [name]="players[1]?.name"
+      [name]="player2?.name"
       [isMyTurn]="playerTurn === 2"
       [invitationLink]="invitationLink"
     ></app-player-info>

@@ -36,8 +36,12 @@ import { WinnerDialogData } from 'src/app/shared/components/winner-dialog/winner
   styleUrls: ['./play-vs-friend.component.scss'],
 })
 export class PlayVsFriendComponent implements OnInit, OnDestroy {
+  /**
+   * Room will be filled one time on initial render.
+   * No realtime data.
+   */
   room?: Room;
-
+  players?: Player[];
   boardResult: BoardResult = [];
   playerTurn: Room['playerTurn'] = 1;
   me?: Player;
@@ -58,11 +62,11 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
   }
 
   get player1() {
-    return this.room?.players[0];
+    return this.players && this.players[0];
   }
 
   get player2() {
-    return this.room?.players[1];
+    return this.players && this.players[1];
   }
 
   get invitationLink() {
@@ -144,6 +148,7 @@ export class PlayVsFriendComponent implements OnInit, OnDestroy {
     this.players$
       .pipe(takeUntil(this.destroy$))
       .pipe(
+        tap((players) => (this.players = players)),
         map((players) => players.length === 2 && players.every((p) => p.exit)),
         filter((allPlayersExit) => allPlayersExit),
         switchMap(() => this.roomService.deleteRoom(this.roomIdParam))
