@@ -14,7 +14,12 @@ import { NameDialogComponent } from 'src/app/shared/components/name-dialog/name-
   styleUrls: ['./play-options.component.scss'],
 })
 export class PlayOptionsComponent implements OnInit {
-  readonly supportedPlayTypes = ['vsFriend'];
+  readonly supportedPlayTypes = ['vsFriend', 'vsPlayer'];
+  readonly offlineTypes = ['vsPlayer'];
+  readonly playRoutePaths = {
+    vsFriend: 'vs-friend',
+    vsPlayer: 'vs-player',
+  };
 
   readonly form = this.formBuilder.group({
     boardSize: [
@@ -45,6 +50,16 @@ export class PlayOptionsComponent implements OnInit {
     return this.route.snapshot.queryParams['type'];
   }
 
+  get isOffline(): boolean {
+    return this.offlineTypes.includes(this.typeQueryParam);
+  }
+
+  get playRoutePath(): string {
+    return this.playRoutePaths[
+      this.typeQueryParam as keyof typeof this.playRoutePaths
+    ];
+  }
+
   private validatePlayType() {
     const valid = this.supportedPlayTypes.includes(this.typeQueryParam);
     if (!valid) {
@@ -70,6 +85,19 @@ export class PlayOptionsComponent implements OnInit {
     // Check if options valid
     if (this.form.invalid) return;
 
+    if (this.isOffline) {
+      this.startOfflineGame();
+    } else {
+      this.startOnlineGame();
+    }
+  }
+
+  private startOfflineGame() {
+    this.createOfflineRoom();
+    this.navigateToGame();
+  }
+
+  private startOnlineGame() {
     const dialogRef = this.dialog.open<NameDialogComponent, unknown, string>(
       NameDialogComponent,
       { autoFocus: false }
@@ -84,7 +112,7 @@ export class PlayOptionsComponent implements OnInit {
           if (!name) throw new Error('Name is required');
           return name;
         }),
-        switchMap((name) => this.createRoom(name)),
+        switchMap((name) => this.createOnlineRoom(name)),
         tap(() => {
           this.uiService.loadingScreen$.next(false);
         })
@@ -94,7 +122,7 @@ export class PlayOptionsComponent implements OnInit {
       });
   }
 
-  private createRoom(name: string) {
+  private createOnlineRoom(name: string) {
     return this.roomService
       .createRoom({ boardSize: this.boardSizeControl.value })
       .pipe(
@@ -107,8 +135,14 @@ export class PlayOptionsComponent implements OnInit {
       );
   }
 
-  private navigateToGame(roomId: string) {
-    this.router.navigate(['./vs-friend'], {
+  private createOfflineRoom() {
+    return this.roomService.createOfflineRoom({
+      boardSize: this.boardSizeControl.value,
+    });
+  }
+
+  private navigateToGame(roomId?: string) {
+    this.router.navigate([this.playRoutePath], {
       relativeTo: this.route,
       replaceUrl: true,
       queryParams: {

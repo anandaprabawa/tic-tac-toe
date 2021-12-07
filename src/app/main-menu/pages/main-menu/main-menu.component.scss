@@ -46,4 +46,8 @@
   display: block;
   max-width: 320px;
   width: 100%;
+
+  &:not(:last-child) {
+    margin-bottom: 16px;
+  }
 }

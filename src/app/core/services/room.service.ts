@@ -8,6 +8,7 @@ import {
   set,
 } from '@angular/fire/database';
 import { from, map, Observable, of } from 'rxjs';
+import { OfflineRoom } from '../models/offline-room.model';
 import { Room } from '../models/room.model';
 import { BoardResult, BoardResultItem } from '../types/board.type';
 import { GeneratedIdService } from './generated-id.service';
@@ -39,6 +40,11 @@ export class RoomService {
     return from(set(dbRef, data)).pipe(map(() => roomId));
   }
 
+  createOfflineRoom(params?: { boardSize?: number }): void {
+    const boardSize = params?.boardSize ?? this.rulesService.minBoardSize;
+    sessionStorage.setItem('boardSize', boardSize.toString());
+  }
+
   getRoom(roomId: string): Observable<Room | null> {
     if (!roomId) return of(null);
     const refPath = `${this.roomsPath}/${roomId}`;
@@ -46,11 +52,22 @@ export class RoomService {
     return from(get(dbRef)).pipe(map((snapshot) => snapshot.val()));
   }
 
+  getOfflineRoom(): OfflineRoom {
+    const boardSize = sessionStorage.getItem('boardSize');
+    return {
+      boardSize: boardSize ?? this.rulesService.minBoardSize,
+    } as OfflineRoom;
+  }
+
   deleteRoom(roomId?: string): Observable<void> {
     if (!roomId) return of();
     const refPath = `${this.roomsPath}/${roomId}`;
     const dbRef = ref(this.db, refPath);
     return from(remove(dbRef));
+  }
+
+  deleteOfflineRoom(): void {
+    sessionStorage.removeItem('boardSize');
   }
 
   playerExitRoom(roomId?: string, player?: number) {

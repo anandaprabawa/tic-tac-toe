@@ -1,0 +1,29 @@
+<div class="wrapper">
+  <div class="players">
+    <app-player-info
+      [player]="1"
+      [name]="player1.name"
+      [isMyTurn]="playerTurn === 1"
+    ></app-player-info>
+    <app-player-info
+      [player]="2"
+      [name]="player2.name"
+      [isMyTurn]="playerTurn === 2"
+    ></app-player-info>
+  </div>
+
+  <app-board
+    (finish)="onFinish($event)"
+    (playerTurnChange)="onPlayerTurnChange($event)"
+    (boardResult)="onBoardResultChange($event)"
+    [size]="room.boardSize"
+    [player1Name]="player1.name"
+    [player2Name]="player2.name"
+    [playerTurn]="playerTurn"
+    [waiting]="false"
+    [result]="boardResult"
+    [me]="currentPlayerTurn"
+  ></app-board>
+</div>
+
+<app-nav-menu></app-nav-menu>

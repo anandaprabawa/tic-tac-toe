@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
-import { collection, doc, Firestore } from '@angular/fire/firestore';
+import { v4 as uuidV4 } from 'uuid';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GeneratedIdService {
-  constructor(private readonly firestore: Firestore) {}
-
   generateId(): string {
-    return doc(collection(this.firestore, 'ids')).id;
+    return uuidV4();
   }
 }

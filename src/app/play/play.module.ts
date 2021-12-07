@@ -8,10 +8,15 @@ import { MatInputModule } from '@angular/material/input';
 import { SharedModule } from '../shared/shared.module';
 import { PlayOptionsComponent } from './pages/play-options/play-options.component';
 import { PlayVsFriendComponent } from './pages/play-vs-friend/play-vs-friend.component';
+import { PlayVsPlayerComponent } from './pages/play-vs-player/play-vs-player.component';
 import { PlayRoutingModule } from './play-routing.module';
 
 @NgModule({
-  declarations: [PlayVsFriendComponent, PlayOptionsComponent],
+  declarations: [
+    PlayVsFriendComponent,
+    PlayOptionsComponent,
+    PlayVsPlayerComponent,
+  ],
   imports: [
     CommonModule,
     PlayRoutingModule,
